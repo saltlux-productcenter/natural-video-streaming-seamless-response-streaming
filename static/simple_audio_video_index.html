@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Avatar WebRTC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .controls-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .controls-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #startBtn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        #connectBtn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        #stopBtn {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .status-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .status-box.connected {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .status-box.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .session-info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            display: none;
+        }
+
+        .session-info span {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* 비디오 섹션 */
+        .video-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            background-color: #000;
+            aspect-ratio: 4/3;
+        }
+
+        /* STT 로그 섹션 */
+        .stt-log-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .stt-log-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .log-container {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #d4d4d4;
+        }
+
+        .log-entry {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            border-left: 3px solid transparent;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-entry.interim {
+            background: rgba(255, 193, 7, 0.1);
+            border-left-color: #ffc107;
+            color: #ffc107;
+        }
+
+        .log-entry.final {
+            background: rgba(40, 167, 69, 0.1);
+            border-left-color: #28a745;
+            color: #4ade80;
+        }
+
+        .log-entry.system {
+            background: rgba(13, 110, 253, 0.1);
+            border-left-color: #0d6efd;
+            color: #60a5fa;
+        }
+
+        .log-timestamp {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .log-type {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .clear-log-btn {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        .clear-log-btn:hover {
+            background: #c82333;
+        }
+
+        /* 스크롤바 스타일 */
+        .log-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .log-container::-webkit-scrollbar-track {
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .log-container::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 AI Avatar WebRTC</h1>
+            <p>Real-time Speech Recognition & Lipsync</p>
+        </div>
+
+        <!-- 컨트롤 섹션 -->
+        <div class="controls-section">
+            <h2>🎮 Controls</h2>
+
+            <div class="button-group">
+                <button id="startBtn">📹 Start Camera</button>
+                <button id="connectBtn" disabled>🌐 Connect Server</button>
+                <button id="stopBtn" disabled>⛔ Disconnect</button>
+            </div>
+
+            <div class="status-box" id="status">
+                카메라와 마이크 권한을 허용하고 시작 버튼을 클릭하세요
+            </div>
+
+            <div class="session-info" id="sessionInfo">
+                Session ID: <span id="sessionId">없음</span><br>
+                Video: <span id="videoStatus">OFF</span> |
+                Audio: <span id="audioStatus">OFF</span> |
+                STT: <span id="sttStatus">OFF</span> |
+                Data Channel: <span id="dataChannelStatus">OFF</span>
+            </div>
+        </div>
+
+        <!-- AI Avatar 비디오 -->
+        <div class="video-section">
+            <video id="remoteVideo" autoplay playsinline></video>
+        </div>
+
+        <!-- STT 로그 섹션 -->
+        <div class="stt-log-section">
+            <h2>
+                <span>🎤 Speech Recognition Log</span>
+                <button class="clear-log-btn" onclick="clearLog()">Clear Log</button>
+            </h2>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry system">
+                    <span class="log-timestamp">[00:00:00]</span>
+                    <span class="log-type">[SYSTEM]</span>
+                    대기 중... 서버에 연결하세요
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class STTWebRTCClient {
+            constructor() {
+                // DOM 요소
+                this.localVideo = null; // My Camera 제거
+                this.remoteVideo = document.getElementById('remoteVideo');
+                this.startBtn = document.getElementById('startBtn');
+                this.connectBtn = document.getElementById('connectBtn');
+                this.stopBtn = document.getElementById('stopBtn');
+                this.status = document.getElementById('status');
+                this.sessionInfo = document.getElementById('sessionInfo');
+                this.sessionId = document.getElementById('sessionId');
+                this.videoStatus = document.getElementById('videoStatus');
+                this.audioStatus = document.getElementById('audioStatus');
+                this.sttStatus = document.getElementById('sttStatus');
+                this.dataChannelStatus = document.getElementById('dataChannelStatus');
+                this.logContainer = document.getElementById('logContainer');
+
+                // WebRTC
+                this.localStream = null;
+                this.pc = null;
+                this.currentSessionId = null;
+                this.serverUrl = 'https://unknown'; // TODO: 시작하기 전에 이 URL을 시그널 서버로 교체!
+
+                // Data Channel
+                this.dataChannel = null;
+
+                this.setupEventListeners();
+                this.addLog('시스템 초기화 완료', 'system');
+            }
+
+            setupEventListeners() {
+                this.startBtn.addEventListener('click', () => this.startMedia());
+                this.connectBtn.addEventListener('click', () => this.connectToServer());
+                this.stopBtn.addEventListener('click', () => this.disconnect());
+            }
+
+            addLog(message, type = 'system') {
+                const now = new Date();
+                const timestamp = now.toLocaleTimeString('ko-KR', { hour12: false });
+
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${type}`;
+
+                const typeLabel = {
+                    'system': '[SYSTEM]',
+                    'interim': '[임시]',
+                    'final': '[STT]'
+                }[type] || '[INFO]';
+
+                logEntry.innerHTML = `
+                    <span class="log-timestamp">[${timestamp}]</span>
+                    <span class="log-type">${typeLabel}</span>
+                    ${message}
+                `;
+
+                this.logContainer.appendChild(logEntry);
+                this.logContainer.scrollTop = this.logContainer.scrollHeight;
+
+                // 로그가 100개 넘으면 오래된 것 제거
+                const logs = this.logContainer.querySelectorAll('.log-entry');
+                if (logs.length > 100) {
+                    logs[0].remove();
+                }
+            }
+
+            updateStatus(message, type = 'normal') {
+                this.status.textContent = message;
+                this.status.className = 'status-box';
+                if (type === 'connected') {
+                    this.status.classList.add('connected');
+                } else if (type === 'error') {
+                    this.status.classList.add('error');
+                }
+
+                this.addLog(message, 'system');
+            }
+
+            async startMedia() {
+                try {
+                    this.updateStatus('카메라와 마이크에 접근하는 중...');
+
+                    this.localStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            frameRate: { ideal: 30 }
+                        },
+                        audio: {
+                            echoCancellation: false,
+                            noiseSuppression: false,
+                            autoGainControl: false,
+                            channelCount: 1,
+                            sampleRate: { ideal: 48000 }
+                        }
+                    });
+
+                    // 로컬 비디오는 표시하지 않음 (My Camera 제거)
+                    // this.localVideo.srcObject = this.localStream;
+
+                    this.startBtn.disabled = true;
+                    this.connectBtn.disabled = false;
+
+                    this.videoStatus.textContent = 'ON';
+                    this.videoStatus.style.color = '#28a745';
+                    this.audioStatus.textContent = 'ON';
+                    this.audioStatus.style.color = '#28a745';
+
+                    this.updateStatus('미디어가 시작되었습니다. 서버에 연결하세요.', 'connected');
+
+                } catch (error) {
+                    console.error('미디어 접근 실패:', error);
+                    this.updateStatus('카메라 또는 마이크 접근 실패', 'error');
+                }
+            }
+
+            async connectToServer() {
+                try {
+                    this.updateStatus('새 세션 생성 중...');
+
+                    // 1. 세션 생성
+                    const sessionResponse = await fetch(`${this.serverUrl}/create-session`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    if (!sessionResponse.ok) {
+                        throw new Error('세션 생성 실패');
+                    }
+
+                    const sessionData = await sessionResponse.json();
+                    this.currentSessionId = sessionData.session_id;
+
+                    this.sessionId.textContent = this.currentSessionId.substring(0, 8) + '...';
+                    this.sessionInfo.style.display = 'block';
+
+                    this.addLog(`세션 생성: ${this.currentSessionId.substring(0, 8)}`, 'system');
+
+                    // 2. WebRTC 연결
+                    this.pc = new RTCPeerConnection({
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' }
+                        ]
+                    });
+
+                    // 3. Data Channel 생성
+                    this.dataChannel = this.pc.createDataChannel('stt_channel', {
+                        ordered: true
+                    });
+
+                    this.dataChannel.onopen = () => {
+                        console.log('✅ Data Channel 열림');
+                        this.dataChannelStatus.textContent = 'ON';
+                        this.dataChannelStatus.style.color = '#28a745';
+                        this.addLog('Data Channel 연결됨', 'system');
+                    };
+
+                    this.dataChannel.onclose = () => {
+                        console.log('❌ Data Channel 닫힘');
+                        this.dataChannelStatus.textContent = 'OFF';
+                        this.dataChannelStatus.style.color = '#dc3545';
+                        this.addLog('Data Channel 연결 끊김', 'system');
+                    };
+
+                    // 4. STT 결과 수신
+                    this.dataChannel.onmessage = (event) => {
+                        try {
+                            const message = JSON.parse(event.data);
+
+                            // ✅ JSON 메시지를 console에 출력
+                            console.log('📩 [Data Channel Message]:', JSON.stringify(message, null, 2));
+
+                            if (message.type === 'stt_result') {
+                                const logType = message.is_final ? 'final' : 'interim';
+                                this.addLog(message.text, logType);
+
+                                if (message.is_final) {
+                                    this.sttStatus.textContent = 'ACTIVE';
+                                    this.sttStatus.style.color = '#28a745';
+                                }
+                            }
+                        } catch (e) {
+                            console.error('❌ [Data Channel] 메시지 파싱 오류:', e);
+                            console.log('📩 [Raw Message]:', event.data);
+                        }
+                    };
+
+                    // ICE candidate
+                    this.pc.onicecandidate = async (event) => {
+                        if (event.candidate) {
+                            try {
+                                await fetch(`${this.serverUrl}/ice-candidate`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        session_id: this.currentSessionId,
+                                        candidate: event.candidate.candidate,
+                                        sdpMid: event.candidate.sdpMid,
+                                        sdpMLineIndex: event.candidate.sdpMLineIndex
+                                    })
+                                });
+                            } catch (error) {
+                                console.error('ICE candidate 전송 실패:', error);
+                            }
+                        }
+                    };
+
+                    this.pc.ontrack = (event) => {
+                        if (!this.remoteVideo.srcObject) {
+                            this.remoteVideo.srcObject = event.streams[0];
+                        }
+                    };
+
+                    this.pc.onconnectionstatechange = () => {
+                        console.log('연결 상태:', this.pc.connectionState);
+                        switch (this.pc.connectionState) {
+                            case 'connected':
+                                this.updateStatus('WebRTC 연결 완료!', 'connected');
+                                this.sttStatus.textContent = 'READY';
+                                this.sttStatus.style.color = '#ffc107';
+                                break;
+                            case 'failed':
+                                this.updateStatus('연결 실패', 'error');
+                                break;
+                        }
+                    };
+
+                    // 5. 로컬 스트림 추가
+                    this.localStream.getTracks().forEach(track => {
+                        this.pc.addTrack(track, this.localStream);
+                    });
+
+                    // 6. Offer 생성
+                    const offer = await this.pc.createOffer();
+                    await this.pc.setLocalDescription(offer);
+
+                    const offerResponse = await fetch(`${this.serverUrl}/offer`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            session_id: this.currentSessionId,
+                            sdp: offer.sdp,
+                            type: offer.type
+                        })
+                    });
+
+                    if (!offerResponse.ok) {
+                        throw new Error('Offer 전송 실패');
+                    }
+
+                    const answer = await offerResponse.json();
+                    await this.pc.setRemoteDescription(new RTCSessionDescription(answer));
+
+                    // 7. ICE candidates 폴링
+                    this.startIceCandidatePolling();
+
+                    this.connectBtn.disabled = true;
+                    this.stopBtn.disabled = false;
+
+                } catch (error) {
+                    console.error('연결 실패:', error);
+                    this.updateStatus(`연결 실패: ${error.message}`, 'error');
+                }
+            }
+
+            startIceCandidatePolling() {
+                const pollOnce = async () => {
+                    if (!this.currentSessionId || !this.pc) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`${this.serverUrl}/ice-candidates/${this.currentSessionId}`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.candidates && data.candidates.length > 0) {
+                                for (const candidate of data.candidates) {
+                                    await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
+                                }
+                            }
+                        }
+
+                        if (this.pc.connectionState === 'connected' || this.pc.connectionState === 'failed') {
+                            return;
+                        }
+
+                        setTimeout(pollOnce, 1000);
+                    } catch (error) {
+                        if (this.pc && this.pc.connectionState !== 'connected' && this.pc.connectionState !== 'failed') {
+                            setTimeout(pollOnce, 1000);
+                        }
+                    }
+                };
+
+                pollOnce();
+            }
+
+            disconnect() {
+                if (this.dataChannel) {
+                    this.dataChannel.close();
+                    this.dataChannel = null;
+                }
+
+                if (this.pc) {
+                    this.pc.close();
+                    this.pc = null;
+                }
+
+                if (this.localStream) {
+                    this.localStream.getTracks().forEach(track => track.stop());
+                    this.localStream = null;
+                }
+
+                this.remoteVideo.srcObject = null;
+
+                this.startBtn.disabled = false;
+                this.connectBtn.disabled = true;
+                this.stopBtn.disabled = true;
+
+                this.sessionInfo.style.display = 'none';
+                this.currentSessionId = null;
+
+                this.videoStatus.textContent = 'OFF';
+                this.videoStatus.style.color = '#6c757d';
+                this.audioStatus.textContent = 'OFF';
+                this.audioStatus.style.color = '#6c757d';
+                this.sttStatus.textContent = 'OFF';
+                this.sttStatus.style.color = '#6c757d';
+                this.dataChannelStatus.textContent = 'OFF';
+                this.dataChannelStatus.style.color = '#6c757d';
+
+                this.updateStatus('연결 종료');
+                this.addLog('세션 종료', 'system');
+            }
+        }
+
+        // 로그 클리어 함수
+        function clearLog() {
+            const logContainer = document.getElementById('logContainer');
+            logContainer.innerHTML = `
+                <div class="log-entry system">
+                    <span class="log-timestamp">[${new Date().toLocaleTimeString('ko-KR', { hour12: false })}]</span>
+                    <span class="log-type">[SYSTEM]</span>
+                    로그 초기화됨
+                </div>
+            `;
+        }
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('STT WebRTC 클라이언트 초기화');
+            new STTWebRTCClient();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+opencv-python
+aiohttp
+aiortc
+websockets
+scipy
+openai
+

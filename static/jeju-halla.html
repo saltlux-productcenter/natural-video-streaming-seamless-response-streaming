@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)http://192.168.220.222/professor/learning/441/2824 -->
+<html lang="ko">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="http://192.168.220.222/favicon.svg"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>제주한라대학교</title>
+    <script
+      type="module"
+      crossorigin=""
+      src="./css/index-jsTvoKd3.js.다운로드"
+    ></script>
+    <style>
+      /* 기본 리셋 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #171719;
+        background: #fff;
+      }
+
+      /* 헤더 */
+      ._header_yupr9_13 {
+        position: sticky;
+        top: 0;
+        height: 64px;
+        width: 100%;
+        border-bottom: 1px solid #e8e8ea;
+        background-color: #ffffff;
+        z-index: 102;
+      }
+
+      ._header_yupr9_13 ._headerList_yupr9_13 {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0 16px;
+        list-style: none;
+      }
+
+      .logo img {
+        display: block;
+      }
+
+      /* 메인 영역 */
+      ._main_yupr9_480 {
+        display: flex;
+        width: 100%;
+        height: calc(100vh - 64px);
+        flex-direction: column;
+        padding: 32px;
+        overflow: hidden;
+        margin-left: 0;
+      }
+
+      .global_wrap {
+        max-width: 1440px;
+        margin: 0 auto;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* 강의 영역 */
+      ._lecture_dhd23_193 {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      ._lectureHead_dhd23_200 {
+        margin-bottom: 20px;
+        flex-shrink: 0;
+      }
+
+      ._title_dhd23_28 h3 {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      ._lectureBody_dhd23_206 {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      ._lectureContents_dhd23_521 {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* 비디오 */
+      ._video_1kyw6_39 {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #fff !important;
+        background-color: #fff !important;
+      }
+
+      #remoteVideo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: #fff !important;
+        background-color: #fff !important;
+      }
+
+      /* 비디오 컨트롤 제거 */
+      ._control_1kyw6_39,
+      #remoteVideo::-webkit-media-controls,
+      #remoteVideo::-webkit-media-controls-enclosure,
+      #remoteVideo::-webkit-media-controls-panel {
+        display: none !important;
+      }
+
+      /* 토스트 알림 컨테이너 */
+      .toast-container {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 400px;
+      }
+
+      /* 토스트 알림 */
+      .toast {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        animation: slideInRight 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 300px;
+        border-left: 4px solid;
+      }
+
+      .toast.sequence-start {
+        border-left-color: #28a745;
+        background: rgba(40, 167, 69, 0.95);
+        color: white;
+      }
+
+      .toast.sequence-stop {
+        border-left-color: #dc3545;
+        background: rgba(220, 53, 69, 0.95);
+        color: white;
+      }
+
+      .toast.order {
+        border-left-color: #667eea;
+        background: rgba(102, 126, 234, 0.95);
+        color: white;
+      }
+
+      .toast.system {
+        border-left-color: #ffc107;
+        background: rgba(255, 193, 7, 0.95);
+        color: #000;
+      }
+
+      .toast-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+
+      .toast-content {
+        flex: 1;
+      }
+
+      .toast-title {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      .toast-message {
+        font-size: 13px;
+        opacity: 0.9;
+      }
+
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+      }
+
+      .toast.removing {
+        animation: fadeOut 0.3s ease;
+      }
+
+      /* 연결 상태 표시 */
+      .status-indicator {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 999;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #dc3545;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .status-dot.connected {
+        background: #28a745;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* 제품 목록 스타일 */
+      .product-list {
+        margin-top: 4px;
+        font-size: 12px;
+        opacity: 0.9;
+      }
+
+      .product-item {
+        margin-left: 8px;
+      }
+
+      /* 비디오 컨트롤러 오버레이 완전 제거 */
+      ._control_1kyw6_39,
+      ._video_1kyw6_39:hover ._control_1kyw6_39,
+      ._video_1kyw6_39 ._control_1kyw6_39,
+      ._video_1kyw6_39::before,
+      ._video_1kyw6_39::after {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      /* 비디오 컨테이너 스타일 재설정 */
+      ._video_1kyw6_39 {
+        position: relative !important;
+        background: transparent !important;
+      }
+
+      /* 비디오 요소 스타일 */
+      #remoteVideo {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        background: #000 !important;
+      }
+
+      /* 브라우저 기본 컨트롤 완전 제거 */
+      #remoteVideo::-webkit-media-controls {
+        display: none !important;
+        opacity: 0 !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-enclosure {
+        display: none !important;
+        opacity: 0 !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-panel {
+        display: none !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-play-button {
+        display: none !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-timeline {
+        display: none !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-current-time-display {
+        display: none !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-time-remaining-display {
+        display: none !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-mute-button {
+        display: none !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-volume-slider {
+        display: none !important;
+      }
+
+      #remoteVideo::-webkit-media-controls-fullscreen-button {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <header class="_header_yupr9_13">
+        <ul class="_headerList_yupr9_13">
+          <h1 class="logo">
+            <img src="jeju-halla.svg" alt="Professor Logo" width="113" height="30">
+          </h1>
+        </ul>
+      </header>
+      <main class="_main_yupr9_480">
+        <div class="global_wrap">
+          <div class="_lecture_dhd23_193">
+            <section class="_lectureHead_dhd23_200">
+              <div class="_title_dhd23_28">
+                <h3>메타 휴먼 교수님에게 질문하기</h3>
+              </div>
+            </section>
+            <section class="_lectureBody_dhd23_206">
+              <div class="_lectureContents_dhd23_521">
+                <div class="_video_1kyw6_39">
+                  <video id="remoteVideo" autoplay playsinline></video>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <!-- 토스트 알림 컨테이너 -->
+      <div class="toast-container" id="toastContainer"></div>
+
+      <!-- 연결 상태 표시 -->
+      <div class="status-indicator">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">연결 대기 중...</span>
+      </div>
+    </div>
+
+    <script>
+      class WebRTCClient {
+        constructor() {
+          this.remoteVideo = document.getElementById('remoteVideo');
+          this.toastContainer = document.getElementById('toastContainer');
+          this.statusDot = document.getElementById('statusDot');
+          this.statusText = document.getElementById('statusText');
+
+          // WebRTC
+          this.localStream = null;
+          this.pc = null;
+          this.currentSessionId = null;
+                this.serverUrl = 'https://unknown'; // TODO: 시작하기 전에 이 URL을 시그널 서버로 교체!
+          this.dataChannel = null;
+
+          this.init();
+        }
+
+        async init() {
+          try {
+            // 자동으로 미디어 시작
+            await this.startMedia();
+            // 자동으로 서버 연결
+            await this.connectToServer();
+          } catch (error) {
+            console.error('초기화 실패:', error);
+            this.showToast('system', '초기화 실패', error.message);
+          }
+        }
+
+        showToast(type, title, message, duration = 5000) {
+          const toast = document.createElement('div');
+          toast.className = `toast ${type}`;
+
+          const icons = {
+            'sequence-start': '▶️',
+            'sequence-stop': '⏹️',
+            'order': '🛒',
+            'system': 'ℹ️'
+          };
+
+          toast.innerHTML = `
+            <div class="toast-icon">${icons[type] || 'ℹ️'}</div>
+            <div class="toast-content">
+              <div class="toast-title">${title}</div>
+              <div class="toast-message">${message}</div>
+            </div>
+          `;
+
+          this.toastContainer.appendChild(toast);
+
+          // 자동 제거
+          setTimeout(() => {
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 300);
+          }, duration);
+        }
+
+        updateStatus(text, connected = false) {
+          this.statusText.textContent = text;
+          if (connected) {
+            this.statusDot.classList.add('connected');
+          } else {
+            this.statusDot.classList.remove('connected');
+          }
+        }
+
+        async startMedia() {
+          try {
+            this.updateStatus('미디어 접근 중...');
+
+            this.localStream = await navigator.mediaDevices.getUserMedia({
+              video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 },
+                frameRate: { ideal: 30 }
+              },
+              audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false,
+                channelCount: 1,
+                sampleRate: { ideal: 48000 }
+              }
+            });
+
+            this.updateStatus('미디어 준비 완료');
+          } catch (error) {
+            console.error('미디어 접근 실패:', error);
+            this.showToast('system', '오류', '카메라/마이크 접근 실패');
+            throw error;
+          }
+        }
+
+        async connectToServer() {
+          try {
+            this.updateStatus('서버 연결 중...');
+
+            // 1. 세션 생성
+            const sessionResponse = await fetch(`${this.serverUrl}/create-session`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!sessionResponse.ok) {
+              throw new Error('세션 생성 실패');
+            }
+
+            const sessionData = await sessionResponse.json();
+            this.currentSessionId = sessionData.session_id;
+
+            console.log('세션 생성:', this.currentSessionId);
+
+            // 2. WebRTC 연결
+            this.pc = new RTCPeerConnection({
+              iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+              ]
+            });
+
+            // 3. Data Channel 생성
+            this.dataChannel = this.pc.createDataChannel('stt_channel', {
+              ordered: true
+            });
+
+            this.dataChannel.onopen = () => {
+              console.log('✅ Data Channel 열림');
+              this.updateStatus('연결 완료', true);
+            };
+
+            this.dataChannel.onclose = () => {
+              console.log('❌ Data Channel 닫힘');
+              this.updateStatus('연결 끊김', false);
+            };
+
+            // 4. 메시지 수신 처리
+            this.dataChannel.onmessage = (event) => {
+              try {
+                const message = JSON.parse(event.data);
+                console.log('📩 [Message]:', message);
+
+                // STT 메시지는 무시
+                if (message.type === 'stt') {
+                  return;
+                }
+
+                // sequence 메시지 처리
+                if (message.type === 'sequence') {
+                  if (message.content === 'start') {
+                    this.showToast('sequence-start', '대화 시작', '새로운 대화 시퀀스가 시작되었습니다');
+                  } else if (message.content === 'stop') {
+                    this.showToast('sequence-stop', '대화 중단', '시퀀스가 중단되었습니다');
+                  }
+                }
+
+                // order 메시지 처리
+                if (message.type === 'order') {
+                  try {
+                    const orderInfo = JSON.parse(message.content.replace(/'/g, '"'));
+                    const productsList = orderInfo.products
+                      .map(p => `<div class="product-item">• ${p.productId} x ${p.qty}</div>`)
+                      .join('');
+
+                    this.showToast(
+                      'order',
+                      `주문 접수 (총 ${orderInfo.totqty}개)`,
+                      `<div class="product-list">${productsList}</div>`,
+                      7000
+                    );
+                  } catch (e) {
+                    this.showToast('order', '주문 접수', message.content, 7000);
+                  }
+                }
+
+              } catch (e) {
+                console.error('❌ 메시지 파싱 오류:', e);
+              }
+            };
+
+            // ICE candidate
+            this.pc.onicecandidate = async (event) => {
+              if (event.candidate) {
+                try {
+                  await fetch(`${this.serverUrl}/ice-candidate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      session_id: this.currentSessionId,
+                      candidate: event.candidate.candidate,
+                      sdpMid: event.candidate.sdpMid,
+                      sdpMLineIndex: event.candidate.sdpMLineIndex
+                    })
+                  });
+                } catch (error) {
+                  console.error('ICE candidate 전송 실패:', error);
+                }
+              }
+            };
+
+            this.pc.ontrack = (event) => {
+              if (!this.remoteVideo.srcObject) {
+                this.remoteVideo.srcObject = event.streams[0];
+                console.log('원격 비디오 스트림 수신');
+              }
+            };
+
+            this.pc.onconnectionstatechange = () => {
+              console.log('연결 상태:', this.pc.connectionState);
+              switch (this.pc.connectionState) {
+                case 'connected':
+                  this.updateStatus('WebRTC 연결 완료', true);
+                  this.showToast('system', '연결 완료', '메타휴먼 교수님과 연결되었습니다');
+                  break;
+                case 'failed':
+                  this.updateStatus('연결 실패', false);
+                  this.showToast('system', '연결 실패', '서버와의 연결에 실패했습니다');
+                  break;
+                case 'disconnected':
+                  this.updateStatus('연결 끊김', false);
+                  break;
+              }
+            };
+
+            // 5. 로컬 스트림 추가
+            this.localStream.getTracks().forEach(track => {
+              this.pc.addTrack(track, this.localStream);
+            });
+
+            // 6. Offer 생성
+            const offer = await this.pc.createOffer();
+            await this.pc.setLocalDescription(offer);
+
+            const offerResponse = await fetch(`${this.serverUrl}/offer`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                session_id: this.currentSessionId,
+                sdp: offer.sdp,
+                type: offer.type
+              })
+            });
+
+            if (!offerResponse.ok) {
+              throw new Error('Offer 전송 실패');
+            }
+
+            const answer = await offerResponse.json();
+            await this.pc.setRemoteDescription(new RTCSessionDescription(answer));
+
+            // 7. ICE candidates 폴링
+            this.startIceCandidatePolling();
+
+          } catch (error) {
+            console.error('연결 실패:', error);
+            this.updateStatus('연결 실패', false);
+            this.showToast('system', '오류', `연결 실패: ${error.message}`);
+          }
+        }
+
+        startIceCandidatePolling() {
+          const pollOnce = async () => {
+            if (!this.currentSessionId || !this.pc) {
+              return;
+            }
+
+            try {
+              const response = await fetch(`${this.serverUrl}/ice-candidates/${this.currentSessionId}`);
+              if (response.ok) {
+                const data = await response.json();
+                if (data.candidates && data.candidates.length > 0) {
+                  for (const candidate of data.candidates) {
+                    await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
+                  }
+                }
+              }
+
+              if (this.pc.connectionState === 'connected' || this.pc.connectionState === 'failed') {
+                return;
+              }
+
+              setTimeout(pollOnce, 1000);
+            } catch (error) {
+              if (this.pc && this.pc.connectionState !== 'connected' && this.pc.connectionState !== 'failed') {
+                setTimeout(pollOnce, 1000);
+              }
+            }
+          };
+
+          pollOnce();
+        }
+      }
+
+      // 초기화
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          console.log('WebRTC Client 초기화');
+          new WebRTCClient();
+        });
+      } else {
+        console.log('WebRTC Client 초기화');
+        new WebRTCClient();
+      }
+    </script>
+  </body>
+</html>
